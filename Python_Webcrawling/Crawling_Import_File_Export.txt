@@ -1,25 +1,25 @@
-#¼¿·¹´Ï¿ò, ºäÆ¼Ç®½ºÇÁ °Ë»öÇØ¼­ pip install ÇÏ¸é µÊ (cmd¿¡¼­)
+ï»¿#ì…€ë ˆë‹ˆì›€, ë·°í‹°í’€ìŠ¤í”„ ê²€ìƒ‰í•´ì„œ pip install í•˜ë©´ ë¨ (cmdì—ì„œ)
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 import csv
 import time
 
-#º¯¼ö
+#ë³€ìˆ˜
 Result = []
 
-# chromedriver »ç¿ë.
+# chromedriver ì‚¬ìš©.
 driver = webdriver.Chrome('D:\chromedriver.exe')
 driver.get('https://www.imdb.com/title/tt4154796/reviews?ref_=tt_ov_rt')
 
-# ¹Ùµğ ¿µ¿ª ÀúÀå
+# ë°”ë”” ì˜ì—­ ì €ì¥
 body = driver.find_element_by_tag_name("body")
 
-# Æú¸µÇü½ÄÀ¸·Î ±¸Çö, ÀÓÀÇÀÇ °ª 50
+# í´ë§í˜•ì‹ìœ¼ë¡œ êµ¬í˜„, ì„ì˜ì˜ ê°’ 50
 num_of_pagedowns = 50
 
-#¹İº¹ÇÏ¸é¼­ load - More¸¦ ´­¸£´Â °úÁ¤ÀÌ°í, find_element_by_-xpath("//*id='¾ÆÀÌµğ']")´Â ¹®¹ıÀÌ¶ó »ı°¢ÇÏ¸é µÊ.
-#Try ¾È¿¡ ¾È ³ÖÀ»·Á¸é Time.sleep ¸¦ ÁÖ¾î¼­, ´ÙÀ½ ÆäÀÌÁö°¡ ºÒ·Á¿Ã ¶§ ±îÁö ±â´Ù¸®¸é µÈ´Ù
+#ë°˜ë³µí•˜ë©´ì„œ load - Moreë¥¼ ëˆŒë¥´ëŠ” ê³¼ì •ì´ê³ , find_element_by_-xpath("//*id='ì•„ì´ë””']")ëŠ” ë¬¸ë²•ì´ë¼ ìƒê°í•˜ë©´ ë¨.
+#Try ì•ˆì— ì•ˆ ë„£ì„ë ¤ë©´ Time.sleep ë¥¼ ì£¼ì–´ì„œ, ë‹¤ìŒ í˜ì´ì§€ê°€ ë¶ˆë ¤ì˜¬ ë•Œ ê¹Œì§€ ê¸°ë‹¤ë¦¬ë©´ ëœë‹¤
 while num_of_pagedowns:
     time.sleep(0.1)
     num_of_pagedowns -= 1
@@ -32,14 +32,14 @@ while num_of_pagedowns:
 time.sleep(1)
 
 
-# BeautifulSoup »ç¿ëÇÑ´Ù. Æ¯È÷ html¶õÀº ¿©±â ¼±¾ğÇØ Áà¾ßÁö ÀÌ¹Ì ´Ù ºÒ·¯¿Â page_source¸¦ ºÒ·¯¿Â´Ù.
+# BeautifulSoup ì‚¬ìš©í•œë‹¤. íŠ¹íˆ htmlë€ì€ ì—¬ê¸° ì„ ì–¸í•´ ì¤˜ì•¼ì§€ ì´ë¯¸ ë‹¤ ë¶ˆëŸ¬ì˜¨ page_sourceë¥¼ ë¶ˆëŸ¬ì˜¨ë‹¤.
 html = driver.page_source
 soup = BeautifulSoup(html, "html.parser")
 
 for link in soup.find_all('div','text show-more__control'):
     Result.append(link.text.strip())
 
-# IMDBÃø ¿¡·¯ ¸Ş¼¼Áö Á¦°Å
+# IMDBì¸¡ ì—ëŸ¬ ë©”ì„¸ì§€ ì œê±°
 for i in range(len(Result)):
     A = str(Result[i])
     A=A.replace("\"","")
@@ -57,5 +57,5 @@ with open("D:\Project\WebCrowling\\tt4154796.csv", 'w', encoding='utf-8') as f:
         writer.writerow('\t')
 
 
-#ÇÑ°èÁ¡ , ÇöÀç ÀÌ°É ´Ù µ¹¸±·Á¸é ¾à 50ÃÊ°¡·® °É¸®´Âµ¥, Äİ¹é°è³äÀ» ¸ø½á¼­ while¿¡¼­ ÇÏ·çÁ¾ÀÏ ÁÖ±¸ÀåÃ¢ µ¹±â¶§¹®¿¡ ±×·³...
-#¶§¹®¿¡ °³¼±ÇÒ ÇÊ¿ä¼ºÀÌ ÀÖ´Ù.
+#í•œê³„ì  , í˜„ì¬ ì´ê±¸ ë‹¤ ëŒë¦´ë ¤ë©´ ì•½ 50ì´ˆê°€ëŸ‰ ê±¸ë¦¬ëŠ”ë°, ì½œë°±ê³„ë…ì„ ëª»ì¨ì„œ whileì—ì„œ í•˜ë£¨ì¢…ì¼ ì£¼êµ¬ì¥ì°½ ëŒê¸°ë•Œë¬¸ì— ê·¸ëŸ¼...
+#ë•Œë¬¸ì— ê°œì„ í•  í•„ìš”ì„±ì´ ìˆë‹¤.
