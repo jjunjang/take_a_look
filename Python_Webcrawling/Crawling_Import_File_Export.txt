@@ -1,0 +1,61 @@
+﻿#셀레니움, 뷰티풀스프 검색해서 pip install 하면 됨 (cmd에서)
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from bs4 import BeautifulSoup
+import csv
+import time
+
+#변수
+Result = []
+
+# chromedriver 사용.
+driver = webdriver.Chrome('D:\chromedriver.exe')
+driver.get('https://www.imdb.com/title/tt4154796/reviews?ref_=tt_ov_rt')
+
+# 바디 영역 저장
+body = driver.find_element_by_tag_name("body")
+
+# 폴링형식으로 구현, 임의의 값 50
+num_of_pagedowns = 50
+
+#반복하면서 load - More를 눌르는 과정이고, find_element_by_-xpath("//*id='아이디']")는 문법이라 생각하면 됨.
+#Try 안에 안 넣을려면 Time.sleep 를 주어서, 다음 페이지가 불려올 때 까지 기다리면 된다
+while num_of_pagedowns:
+    time.sleep(0.1)
+    num_of_pagedowns -= 1
+
+    try:
+        driver.find_element_by_xpath("//*[@id='load-more-trigger']").click()
+    except:
+        None
+
+time.sleep(1)
+
+
+# BeautifulSoup 사용한다. 특히 html란은 여기 선언해 줘야지 이미 다 불러온 page_source를 불러온다.
+html = driver.page_source
+soup = BeautifulSoup(html, "html.parser")
+
+for link in soup.find_all('div','text show-more__control'):
+    Result.append(link.text.strip())
+
+# IMDB측 에러 메세지 제거
+for i in range(len(Result)):
+    A = str(Result[i])
+    A=A.replace("\"","")
+    A=A.replace('**SPOILER ALERT**','')
+    A=A.replace('**Spoilers alert**','')
+    Result[i] = A
+
+
+
+#recommend Python 3 version
+with open("D:\Project\WebCrowling\\tt4154796.csv", 'w', encoding='utf-8') as f:
+    writer = csv.writer(f)
+    for row in Result:
+        writer.writerow([row])
+        writer.writerow('\t')
+
+
+#한계점 , 현재 이걸 다 돌릴려면 약 50초가량 걸리는데, 콜백계념을 못써서 while에서 하루종일 주구장창 돌기때문에 그럼...
+#때문에 개선할 필요성이 있다.

@@ -1,0 +1,45 @@
+﻿#셀레니움, 뷰티풀스프 검색해서 pip install 하면 됨 (cmd에서)
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from bs4 import BeautifulSoup
+import time
+
+# chromedriver 사용.
+driver = webdriver.Chrome('D:\chromedriver.exe')
+driver.get('https://www.imdb.com/title/tt4154796/reviews?ref_=tt_ov_rt')
+
+# BeautifulSoup 사용한다.
+html = driver.page_source
+soup = BeautifulSoup(html, "html.parser")
+
+# 바디 영역 저장
+body = driver.find_element_by_tag_name("body")
+
+
+# 이제 load - More 을 계속 눌러서 페이지를 봐야되는데, 이걸 콜백형식으로 구현하는거 알아보기 힘들것 같아서 그냥 임의의 값 500 줘 봄 (폴링형식임)
+num_of_pagedowns = 500
+
+#반복하면서 load - More를 눌르는 과정이고, find_element_by_-xpath("//*id='아이디']")는 문법이라 생각하면 됨.
+#Try 안에 안 넣을려면 Time.sleep 를 주어서, 다음 페이지가 불려올 때 까지 기다리면 되긴 하는데 귀찮아서 그냥 넣음.
+while num_of_pagedowns:
+    time.sleep(0.1)
+    num_of_pagedowns -= 1
+
+    try:
+        driver.find_element_by_xpath("//*[@id='load-more-trigger']").click()
+    except:
+        None
+
+time.sleep(1)
+
+soup = BeautifulSoup(html, "html.parser")
+
+for link in soup.find_all('div','text show-more__control'):
+    print(link.text.strip(), link.get('href'))
+    print("\t")
+
+
+
+
+#한계점 , 현재 이걸 다 돌릴려면 약 50초가량 걸리는데, 콜백계념을 못써서 while에서 하루종일 주구장창 돌기때문에 그럼...
+#때문에 개선할 필요성이 있다.
