@@ -97,5 +97,3 @@ for i in range(len(T_const)):
     Title.clear()
     Content.clear()
     driver.__exit__()
-#한계점 , 현재 이걸 다 돌릴려면 약 50초가량 걸리는데, 콜백계념을 못써서 while에서 하루종일 주구장창 돌기때문에 그럼...
-#때문에 개선할 필요성이 있다.
