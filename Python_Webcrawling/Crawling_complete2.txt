@@ -16,7 +16,6 @@ User = []
 Title = []
 Content = []
 
-
 def Click():
     while(True):
         try:
@@ -97,4 +96,4 @@ for i in range(len(T_const)):
     User.clear()
     Title.clear()
     Content.clear()
-    driver.__exit__()
+    driver.quit()
