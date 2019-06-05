@@ -10,13 +10,11 @@ Star = []
 Title = []
 Content = []
 
-# chromedriver 사용.
+
 driver = webdriver.Chrome('D:\chromedriver.exe')
-driver.get('https://www.imdb.com/title/tt4154796/reviews?ref_=tt_ov_rt')
+driver.get('https://www.imdb.com/title/tt0338564/reviews?ref_=tt_ov_rt')
 
-# 바디 영역 저장_element_by_tag_name("body")
 
-body = driver.find
 def Click():
     while(True):
         try:
@@ -62,7 +60,7 @@ def Gabage_Remove_Star(inputArray):
         A = str(inputArray[i])
         A = A.replace("/10",'')
         Gabage_Result.append(A)
-    return Gabage_Remove()
+    return Gabage_Result
 
 
 
@@ -71,7 +69,7 @@ Star_R = Gabage_Remove_Star(Star)
 Title_R = Gabage_Remove(Title)
 Content_R = Gabage_Remove(Content)
 
-with open("D:\Project\WebCrowling\\tt4154797.tsv", 'w', encoding='utf-8') as f:
+with open("D:\Project\WebCrowling\\tt0338564.tsv", 'w', encoding='utf-8') as f:
     for row in range(len(Star)):
         f.write(Star_R[row])
         f.write("\t")
