@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 import csv
 import time
 
+driver = webdriver.Chrome('D:\chromedriver.exe')
+
 #사용 변수
 T_const_Temp = []
 T_const = []
@@ -72,7 +74,6 @@ def Tconst_List():
 T_const = Tconst_List()
 print(range(len(T_const)))
 for i in range(len(T_const)):
-    driver = webdriver.Chrome('D:\chromedriver.exe')
     driver.get(('https://www.imdb.com/title/') + str(T_const[i]) + ('/reviews?ref_=tt_ov_rt'));
 
     Crawling(Click())
