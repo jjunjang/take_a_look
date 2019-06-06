@@ -1,0 +1,101 @@
+﻿데이터 양이 방대 한 만큼 쿼리에 부담을 적게 주기 위해 분할한다.
+
+
+0. 테이블들 insert
+LOAD DATA LOCAL INFILE     'C:/Users/Cyphe/Desktop/crew.tsv'    # 파일 위치 설정
+INTO TABLE                 crew        # insert할 테이블명
+COLUMNS TERMINATED BY      '\t'               # column을 나누는 구분자. 텝으로 나눴다면 \t
+LINES TERMINATED BY        '\n'            # row를 나누는 구분자. 
+
+
+[basic_title 정리]
+
+1. 베이직 타이틀에서 영화아닌거 전부 삭제
+delete from basic_title where titleType != 'movie'
+
+
+2. 나머지 고전명작 제외하고 삭-제
+delete from basic_title 
+where startYear not between 1980 and 2020 and primaryTitle <> 'Citizen Kane'
+and primaryTitle <> '12 Angry Men' 
+and primaryTitle <> 'The Godfather' 
+and primaryTitle <> 'The Godfather: Part II'
+and primaryTitle <> 'The Godfather: Part III'
+and primaryTitle <> 'Gone With The Wind' 
+
+
+
+
+3. 시작년도가 정보 없는것들 (대부분 십 고전영화 이므로) 삭제
+delete from basic_title where startyear is null;
+
+
+4. 리뷰 수가 5000개 이하인것 삭제
+delete from ratings where numVotes < 5000;
+
+
+
+5. ratings 에서 적용한거 베이직 타이틀에 적용
+delete from basic_title
+where tconst not in (select tconst from ratings);
+
+
+6. 서로 다른거 있으니 한번 더 진행
+delete from ratings
+where tconst not in (select tconst from basic_title);
+
+
+5. 다른 테이블 데이터 일치화 (부하가 많이 큰 작업)
+
+basic_title 을 기반으로 (akas , basic_name, principal, ratings ,crew) 총 5개는 완료함
+
+delete from akas
+where akas.titleld not in (select tconst from basic_title);
+
+delete from basic_name
+where basic_name.nconst not in (select nconst from akas);
+
+delete from principal
+where principal.tconst not in (select tconst from basic_title);
+
+delete from ratings
+where ratings.tconst not in (select tconst from basic_title);
+
+delete from crew
+where crew.tconst not in (select tconst from basic_title);
+
+
+
+-----------------------------여기까진 정상
+
+<치명적>
+delete from basic_name
+where basic_name.nconst not in (select distinct(nconst) from principal);
+
+인덱스를 안거치기에 시간이 조~ㄴ 나 오래걸린다.
+때문에 Temp를 만들어서 여기서 LEFT JOIN 해준뒤에
+그 LEFT JOIN과 맞는것만 유지하는게 빠를듯 싶다
+
+<개선>
+INSERT INTO TEMP
+SELECT DISTINCT basic_name.nconst
+FROM basic_name LEFT OUTER JOIN principal ON principal.nconst = basic_name.nconst
+WHERE basic_name.nconst IS NULL;
+
+
+
+<외래키 무결성 지정>
+alter table crew
+add constraint crew_F
+foreign key (tconst)
+references basic_title (tconst) on delete cascade;
+
+
+
+<파일 꺼내기>
+SELECT * FROM basic_titles
+INTO OUTFILE 'my_table.csv'
+CHARACTER SET euckr
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+

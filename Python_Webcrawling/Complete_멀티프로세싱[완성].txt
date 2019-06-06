@@ -1,0 +1,130 @@
+#셀레니움, 뷰티풀스프 검색해서 pip install 하면 됨 (cmd에서)
+from selenium import webdriver
+from bs4 import BeautifulSoup
+import csv
+import time
+from multiprocessing import Process
+#전체 크롤링 시간 측정을 위한 코드
+startTime = time.time()
+
+#사용 변수
+T_const_Temp = []
+T_const = []
+
+#최종 출력 변수
+Star = []
+User = []
+Title = []
+Content = []
+
+def Click():
+    while(True):
+        try:
+            time.sleep(5)
+            driver.find_element_by_xpath("//*[@id='load-more-trigger']").click()
+        except:
+            break;
+
+    return driver
+
+def Crawling(driver):
+    # BeautifulSoup 사용한다. 특히 html란은 여기 선언해 줘야지 이미 다 불러온 page_source를 불러온다.
+    html = driver.page_source
+    soup = BeautifulSoup(html, "html.parser")
+    reviews = soup.find_all('div', class_='review-container')
+
+    for review in reviews:
+        rating = review.find('span', class_='rating-other-user-rating')
+        if rating:
+            rating = ''.join(i.text for i in rating.find_all('span'))
+        rating = rating if rating else '0'
+        Star.append(rating)
+        Title.append(review.find('a', class_='title').text.strip())
+        User.append(review.find('span', class_='display-name-link').text)
+        Content.append(review.find('div', class_='content').div.text)
+
+def Gabage_Remove(inputArray):
+    Gabage_Result = []
+    for i in range(len(inputArray)):
+        temp = str(inputArray[i])
+        temp = temp.replace('**SPOILER ALERT**', '')
+        temp = temp.replace('**Spoilers alert**', '')
+        temp = temp.replace('\n','')
+        Gabage_Result.append(temp)
+    return Gabage_Result
+
+def Gabage_Remove_Star(inputArray):
+    Gabage_Result = []
+    for i in range(len(inputArray)):
+        temp = str(inputArray[i])
+        temp = temp.replace("/10",'')
+        Gabage_Result.append(temp)
+    return Gabage_Result
+
+def Tconst_List():
+    with open('C:\\Users\\Cyphe\\Desktop\\python\\Movie_Tconst.csv') as f:
+        for line in f:
+            T_const_Temp.append(line)
+        for i in range(len(T_const_Temp)):
+            temp = str(T_const_Temp[i])
+            temp=temp.replace('\n','')
+            T_const.append(temp)
+        return T_const
+
+def start(v_start, v_end):
+    for i in range(v_start, v_end):
+        global Star
+        global User
+        global Title
+        global Content
+        global driver
+
+        time.sleep(1.5)
+        driver = webdriver.Chrome('D:\chromedriver.exe')
+        driver.get(('https://www.imdb.com/title/') + str(T_const[i]) + ('/reviews?ref_=tt_ov_rt'));
+
+
+        Crawling(Click())
+        Star = Gabage_Remove_Star(Star)
+        Title = Gabage_Remove(Title)
+        Content = Gabage_Remove(Content)
+        open_R = "D:\Project\WebCrowling\\" + str(T_const[i]) + ".tsv"
+
+        with open(open_R,'w',encoding='utf-8') as f:
+            for row in range(len(Star)):
+                f.write(Star[row])
+                f.write("\t")
+                f.write(User[row])
+                f.write("\t")
+                f.write(Title[row])
+                f.write("\t")
+                f.write(Content[row])
+                f.write("\n")
+        Star.clear()
+        User.clear()
+        Title.clear()
+        Content.clear()
+        driver.quit()
+
+T_const = Tconst_List()
+
+if __name__ == '__main__':
+    ran_TMP = len(T_const)
+    ran_TMP = int(ran_TMP / 4)
+    pr1 = Process(target=start, args=(0, ran_TMP))
+    pr2 = Process(target=start, args=(ran_TMP, ran_TMP * 2))
+    pr3 = Process(target=start, args=(ran_TMP * 2, ran_TMP * 3))
+    pr4 = Process(target=start, args=(ran_TMP * 3, int(len(T_const))))
+
+    pr1.start()
+    pr2.start()
+    pr3.start()
+    pr4.start()
+
+    pr1.join()
+    pr2.join()
+    pr3.join()
+    pr4.join()
+
+endTime = time.time() - startTime
+print(endTime)
