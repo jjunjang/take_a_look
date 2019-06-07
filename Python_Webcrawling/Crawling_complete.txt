@@ -1,0 +1,102 @@
+#셀레니움, 뷰티풀스프 검색해서 pip install 하면 됨 (cmd에서)
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from bs4 import BeautifulSoup
+import csv
+import time
+
+
+#사용 변수
+T_const_Temp = []
+T_const = []
+#최종 출력 변수
+Star = []
+Title = []
+Content = []
+
+def Click():
+    while(True):
+        try:
+            time.sleep(3)
+            driver.find_element_by_xpath("//*[@id='load-more-trigger']").click()
+        except:
+            break;
+
+    return driver
+
+def Crawling(driver):
+    # BeautifulSoup 사용한다. 특히 html란은 여기 선언해 줘야지 이미 다 불러온 page_source를 불러온다.
+    html = driver.page_source
+    soup = BeautifulSoup(html, "html.parser")
+    reviews = soup.find_all('div', class_='review-container')
+
+    for review in reviews:
+        rating = review.find('span', class_='rating-other-user-rating')
+        if rating:
+            rating = ''.join(i.text for i in rating.find_all('span'))
+        rating = rating if rating else '0'
+        Star.append(rating)
+
+    for title in soup.find_all('a', {'class': 'title'}):
+        Title.append(title.text.strip())
+
+    for content in soup.find_all(True,{'class' :['text show-more__control','text show-more__control clickable']}):
+        Content.append(content.text.strip())
+
+def Gabage_Remove(inputArray):
+    Gabage_Result = []
+    for i in range(len(inputArray)):
+        temp = str(inputArray[i])
+        temp = temp.replace('**SPOILER ALERT**', '')
+        temp = temp.replace('**Spoilers alert**', '')
+        temp = temp.replace('\n','')
+        Gabage_Result.append(temp)
+    return Gabage_Result
+
+def Gabage_Remove_Star(inputArray):
+    Gabage_Result = []
+    for i in range(len(inputArray)):
+        temp = str(inputArray[i])
+        temp = temp.replace("/10",'')
+        Gabage_Result.append(temp)
+    return Gabage_Result
+
+def Tconst_List():
+    with open('C:\\Users\\Cyphe\\Desktop\\python\\Movie_Tconst.csv') as f:
+        for line in f:
+            T_const_Temp.append(line)
+        for i in range(len(T_const_Temp)):
+            temp = str(T_const_Temp[i])
+            temp=temp.replace('\n','')
+            T_const.append(temp)
+            print(1)
+        return T_const
+
+T_const = Tconst_List()
+print(range(len(T_const)))
+for i in range(len(T_const)):
+    driver = webdriver.Chrome('D:\chromedriver.exe')
+    driver.get(('https://www.imdb.com/title/') + str(T_const[i]) + ('/reviews?ref_=tt_ov_rt'));
+
+    Crawling(Click())
+    Star = Gabage_Remove_Star(Star)
+    Title = Gabage_Remove(Title)
+    Content = Gabage_Remove(Content)
+    open_R = "D:\Project\WebCrowling\\" + str(T_const[i]) + ".tsv"
+
+    with open(open_R,'w',encoding='utf-8') as f:
+        for row in range(len(Star)):
+            f.write(Star[row])
+            f.write("\t")
+            f.write(Title[row])
+            f.write("\t")
+            f.write(Content[row])
+            f.write("\n")
+    print(i)
+    Star.clear()
+    Title.clear()
+    Content.clear()
+
+
+#한계점 , 현재 이걸 다 돌릴려면 약 50초가량 걸리는데, 콜백계념을 못써서 while에서 하루종일 주구장창 돌기때문에 그럼...
+#때문에 개선할 필요성이 있다.
