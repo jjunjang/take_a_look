@@ -12,7 +12,7 @@ LINES TERMINATED BY        '\n'                                 # row를 나누�
 [basic_title 정리]
 
 1. 베이직 타이틀에서 영화아닌거 전부 삭제
-delete from basic_titles where titleType != 'movie'
+delete from basic_titles where titleType != 'movie';
 
 
 2. 나머지 고전명작 제외하고 삭제
@@ -94,8 +94,8 @@ references basic_titles (tconst) on delete cascade;
 
 <파일 꺼내기>
 SELECT * FROM basic_titles
-INTO OUTFILE '절대경로/my_table.csv'
-CHARACTER SET euckr
+INTO OUTFILE 'C:/Users/JJunJang/OneDrive/project/TakeALook_pj/pythonDB/my_table.csv'
+CHARACTER SET utf8
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 
