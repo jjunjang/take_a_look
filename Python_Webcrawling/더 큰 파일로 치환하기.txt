@@ -1,0 +1,35 @@
+import os
+import shutil
+
+def Tconst_List():
+    with open('C:\\Users\\Cyphe\\Desktop\\python\\Movie_Tconst.csv') as f: # 해당 경로에 있는 T_const 파일을 원본으로 함.
+        global T_const
+        T_const = []
+        T_const_Temp = []
+        for line in f:
+            T_const_Temp.append(line)
+        for i in range(len(T_const_Temp)):
+            temp = str(T_const_Temp[i])
+            temp = temp.replace('\n', '')
+            temp = temp.replace("\"", '')
+            T_const.append(temp)
+        return T_const
+
+T_const = Tconst_List()
+for i in range(len(T_const)): 
+    A = ('C:\\Users\Cyphe\Desktop\WebCrowling1\\' + T_const[i] + '.tsv').encode('ascii','ignore') # A 파일 설정
+    B = ('‪C:\\Users\Cyphe\Desktop\WebCrowling2\\' + T_const[i] + '.tsv').encode('ascii','ignore') # B 파일 설정
+    Complete = ('‪C:\\Users\\Cyphe\\Desktop\\Complete\\' + T_const[i] + '.tsv').encode('ascii','ignore') # A,B를 비교해서 더 큰 파일이 Complete에 들어갈거임.
+    mystat1 = os.stat(A)
+    mystat2 = os.stat(B)
+    mysize1 = mystat1.st_size
+    mysize2 = mystat2.st_size
+
+    if mysize1 == mysize2:
+        shutil.move(A,Complete)
+    elif mysize1>mysize2:
+        shutil.move(A,Complete)
+    else:
+        shutil.move(B,Complete)
+
+    print(T_const[i])
