@@ -1,0 +1,275 @@
+#셀레니움, 뷰티풀스프 검색해서 pip install 하면 됨 (cmd에서)
+from selenium import webdriver
+from bs4 import BeautifulSoup
+import csv
+import time
+from multiprocessing import Process
+#전체 크롤링 시간 측정을 위한 코드
+startTime = time.time()
+driver = webdriver
+#사용 변수
+T_const_Temp = []
+T_const = []
+
+#최종 출력 변수
+Star = []
+User = []
+Title = []
+Content = []
+
+
+def Gabage_Remove(inputArray):
+    Gabage_Result = []
+    for i in range(len(inputArray)):
+        temp = str(inputArray[i])
+        temp = temp.replace('**SPOILER ALERT**', '')
+        temp = temp.replace('**Spoilers alert**', '')
+        temp = temp.replace('\n','')
+        Gabage_Result.append(temp)
+    return Gabage_Result
+
+def Gabage_Remove_Star(inputArray):
+    Gabage_Result = []
+    for i in range(len(inputArray)):
+        temp = str(inputArray[i])
+        temp = temp.replace("/10",'')
+        Gabage_Result.append(temp)
+    return Gabage_Result
+
+def Tconst_List():
+    with open('C:\\Users\\Cyphe\\Desktop\\python\\Movie_Tconst.csv') as f:
+        for line in f:
+            T_const_Temp.append(line)
+        for i in range(len(T_const_Temp)):
+            temp = str(T_const_Temp[i])
+            temp = temp.replace('\n','')
+            temp = temp.replace("\"",'')
+            T_const.append(temp)
+        return T_const
+
+def Click():
+    while(True):
+        try:
+            time.sleep(5)
+            driver.find_element_by_xpath("//*[@id='load-more-trigger']").click()
+        except:
+            break;
+
+    return driver
+
+def Crawling(driver):
+    # BeautifulSoup 사용한다. 특히 html란은 여기 선언해 줘야지 이미 다 불러온 page_source를 불러온다.
+    html = driver.page_source
+    soup = BeautifulSoup(html, "html.parser")
+    reviews = soup.find_all('div', class_='review-container')
+
+    for review in reviews:
+        rating = review.find('span', class_='rating-other-user-rating')
+        if rating:
+            rating = ''.join(i.text for i in rating.find_all('span'))
+        rating = rating if rating else '0'
+        Star.append(rating)
+        Title.append(review.find('a', class_='title').text.strip())
+        User.append(review.find('span', class_='display-name-link').text)
+        Content.append(review.find('div', class_='content').div.text)
+
+def start(v_start, v_end):
+    for i in range(v_start, v_end):
+        global Star
+        global User
+        global Title
+        global Content
+        global driver
+
+        # 크롬 드라이버 에러 해제용 While exception
+        while (True):
+            try:
+                time.sleep(1.5)
+                options = webdriver.ChromeOptions()
+                options.add_argument('headless')
+                options.add_argument('window-size=1920x1080')
+                options.add_argument("disable-gpu")
+                driver = webdriver.Chrome('D:\chromedriver.exe',chrome_options=options)
+                driver.get('https://www.imdb.com/title/' + str(T_const[i]) + '/reviews?ref_=tt_ov_rt')
+                driver.set_window_size(850,1400)
+
+                Crawling(Click())
+                Star = Gabage_Remove_Star(Star)
+                Title = Gabage_Remove(Title)
+                Content = Gabage_Remove(Content)
+                open_R = ('D:\Project\WebCrowling\\' + str(T_const[i]) + ".tsv")
+
+                with open(open_R, 'w', encoding='utf-8') as f:
+                    for row in range(len(Star)):
+                        f.write(Star[row])
+                        f.write("\t")
+                        f.write(User[row])
+                        f.write("\t")
+                        f.write(Title[row])
+                        f.write("\t")
+                        f.write(Content[row])
+                        f.write("\n")
+                Star.clear()
+                User.clear()
+                Title.clear()
+                Content.clear()
+                driver.quit()
+                break
+            except:
+                print("Error!!" + T_const[i])
+
+
+T_const = Tconst_List()
+
+if __name__ == '__main__':
+    ran_TMP = len(T_const)
+    ran_TMP = int(ran_TMP / 36)
+    pr1 = Process(target=start, args=(0, ran_TMP))
+    pr2 = Process(target=start, args=(ran_TMP, ran_TMP * 2))
+    pr3 = Process(target=start, args=(ran_TMP * 2, ran_TMP * 3))
+    pr4 = Process(target=start, args=(ran_TMP * 3, ran_TMP * 4))
+    pr5 = Process(target=start, args=(ran_TMP * 4, ran_TMP * 5))
+    pr6 = Process(target=start, args=(ran_TMP * 5, ran_TMP * 6))
+    pr7 = Process(target=start, args=(ran_TMP * 6, ran_TMP * 7))
+    pr8 = Process(target=start, args=(ran_TMP * 7, ran_TMP * 8))
+    pr9 = Process(target=start, args=(ran_TMP * 8, ran_TMP * 9))
+    pr10 = Process(target=start, args=(ran_TMP * 9, ran_TMP * 10))
+    pr11 = Process(target=start, args=(ran_TMP * 10, ran_TMP * 11))
+    pr12 = Process(target=start, args=(ran_TMP * 11, ran_TMP * 12))
+    pr13 = Process(target=start, args=(ran_TMP * 12, ran_TMP * 13))
+    pr14 = Process(target=start, args=(ran_TMP * 13, ran_TMP * 14))
+    pr15 = Process(target=start, args=(ran_TMP * 14, ran_TMP * 15))
+    pr16 = Process(target=start, args=(ran_TMP * 15, ran_TMP * 16))
+    pr17 = Process(target=start, args=(ran_TMP * 16, ran_TMP * 17))
+    pr18 = Process(target=start, args=(ran_TMP * 17, ran_TMP * 18))
+    pr19 = Process(target=start, args=(ran_TMP * 18, ran_TMP * 19))
+    pr20 = Process(target=start, args=(ran_TMP * 19, ran_TMP * 20))
+    pr21 = Process(target=start, args=(ran_TMP * 20, ran_TMP * 21))
+    pr22 = Process(target=start, args=(ran_TMP * 21, ran_TMP * 22))
+    pr23 = Process(target=start, args=(ran_TMP * 22, ran_TMP * 23))
+    pr24 = Process(target=start, args=(ran_TMP * 23, ran_TMP * 24))
+    pr25 = Process(target=start, args=(ran_TMP * 24, ran_TMP * 25))
+    pr26 = Process(target=start, args=(ran_TMP * 25, ran_TMP * 26))
+    pr27 = Process(target=start, args=(ran_TMP * 26, ran_TMP * 27))
+    pr28 = Process(target=start, args=(ran_TMP * 27, ran_TMP * 28))
+    pr29 = Process(target=start, args=(ran_TMP * 28, ran_TMP * 29))
+    pr30 = Process(target=start, args=(ran_TMP * 29, ran_TMP * 30))
+    pr31 = Process(target=start, args=(ran_TMP * 30, ran_TMP * 31))
+    pr32 = Process(target=start, args=(ran_TMP * 31, ran_TMP * 32))
+    pr33 = Process(target=start, args=(ran_TMP * 32, ran_TMP * 33))
+    pr34 = Process(target=start, args=(ran_TMP * 33, ran_TMP * 34))
+    pr35 = Process(target=start, args=(ran_TMP * 34, ran_TMP * 35))
+    pr36 = Process(target=start, args=(ran_TMP * 35, int(len(T_const))))
+
+    pr1.start()
+    time.sleep(2)
+    pr2.start()
+    time.sleep(2)
+    pr3.start()
+    time.sleep(2)
+    pr4.start()
+    time.sleep(2)
+    pr5.start()
+    time.sleep(2)
+    pr6.start()
+    time.sleep(2)
+    pr7.start()
+    time.sleep(2)
+    pr8.start()
+    time.sleep(2)
+    pr9.start()
+    time.sleep(2)
+    pr10.start()
+    time.sleep(2)
+    pr11.start()
+    time.sleep(2)
+    pr12.start()
+    time.sleep(2)
+    pr13.start()
+    time.sleep(2)
+    pr14.start()
+    time.sleep(2)
+    pr15.start()
+    time.sleep(2)
+    pr16.start()
+    time.sleep(2)
+    pr17.start()
+    time.sleep(2)
+    pr18.start()
+    time.sleep(2)
+    pr19.start()
+    time.sleep(2)
+    pr20.start()
+    time.sleep(2)
+    pr21.start()
+    time.sleep(2)
+    pr22.start()
+    time.sleep(2)
+    pr23.start()
+    time.sleep(2)
+    pr24.start()
+    time.sleep(2)
+    pr25.start()
+    time.sleep(2)
+    pr26.start()
+    time.sleep(2)
+    pr27.start()
+    time.sleep(2)
+    pr28.start()
+    time.sleep(2)
+    pr29.start()
+    time.sleep(2)
+    pr30.start()
+    time.sleep(2)
+    pr31.start()
+    time.sleep(2)
+    pr32.start()
+    time.sleep(2)
+    pr33.start()
+    time.sleep(2)
+    pr34.start()
+    time.sleep(2)
+    pr35.start()
+    time.sleep(2)
+    pr36.start()
+    time.sleep(2)
+
+    pr1.join()
+    pr2.join()
+    pr3.join()
+    pr4.join()
+    pr5.join()
+    pr6.join()
+    pr7.join()
+    pr8.join()
+    pr9.join()
+    pr10.join()
+    pr11.join()
+    pr12.join()
+    pr13.join()
+    pr14.join()
+    pr15.join()
+    pr16.join()
+    pr17.join()
+    pr18.join()
+    pr19.join()
+    pr20.join()
+    pr21.join()
+    pr22.join()
+    pr23.join()
+    pr24.join()
+    pr25.join()
+    pr26.join()
+    pr27.join()
+    pr28.join()
+    pr29.join()
+    pr30.join()
+    pr31.join()
+    pr32.join()
+    pr33.join()
+    pr34.join()
+    pr35.join()
+    pr36.join()
+
+endTime = time.time() - startTime
+print(endTime)
