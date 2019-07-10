@@ -1,0 +1,61 @@
+import csv
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.stem.snowball import SnowballStemmer
+
+
+definitive_Content = []
+definitive_Title = []
+
+
+
+f = open("D:\\Project\\WebCrowling\\tt4857264.tsv",'r',encoding='utf-8')
+rdr = list(csv.reader(f,delimiter='\t',quoting=3))
+Star = []
+Id = []
+Title = []
+Content = []
+f.close()
+for line in rdr:
+    Star.append(line[0])
+    Id.append(line[1])
+    Title.append(line[2])
+    Content.append(line[3])
+
+
+
+i = 0;
+for line in Content:
+    strContent = Content[i]
+    strTitle = Title[i]
+
+    #영문자 대소문자 제외 모두 삭제
+    remove_Title = re.sub('[^a-zA-Z]',' ', strTitle)
+    remove_Content = re.sub('[^a-zA-Z]',' ', strContent)
+
+    #소문자 변환 & 토큰화
+    remove_Content = remove_Content.lower().split()
+    remove_Title = remove_Title.lower().split()
+
+    #불용어 삭제
+    remove_Title = [i for i in remove_Title if not i in stopwords.words('english')]
+    remove_Content = [i for i in remove_Content if not i in stopwords.words('english')]
+
+    #스테밍
+    stemmer = nltk.stem.PorterStemmer()
+    definitive_Title.append([stemmer.stem(w) for w in remove_Content])
+    definitive_Content.append([stemmer.stem(w) for w in remove_Content])
+
+    i += 1
+
+
+print(type(remove_Title))
+print(remove_Title)
+print(definitive_Title[1])
+
+
+
+
+
