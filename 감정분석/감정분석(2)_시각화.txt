@@ -12,7 +12,7 @@ definitive_Title = []
 
 
 
-f = open("D:\\Project\\WebCrowling\\tt4857264.tsv",'r',encoding='utf-8')
+f = open("D:\\Project\\WebCrowling\\tt7784604.tsv",'r',encoding='utf-8')
 rdr = list(csv.reader(f,delimiter='\t',quoting=3))
 Star = []
 Id = []
@@ -53,32 +53,25 @@ for line in Content:
 
 
 definitive_Content = ' '.join(str(v) for v in definitive_Content)
-definitive_Content=definitive_Content.replace('[','')
-definitive_Content=definitive_Content.replace(']','')
-definitive_Content=definitive_Content.replace('\'movi\'','')
-definitive_Content=definitive_Content.replace('\'film\'','')
-definitive_Content=definitive_Content.replace('\'watch\'','')
-definitive_Content=definitive_Content.replace('\'one\'','')
-definitive_Content=definitive_Content.replace('\'much\'','')
-definitive_Content=definitive_Content.replace('\'great\'','')
-definitive_Content=definitive_Content.replace('\'like\'','')
-definitive_Content=definitive_Content.replace('\'make\'','')
-definitive_Content=definitive_Content.replace('\'even\'','')
-definitive_Content=definitive_Content.replace('\'good\'','')
+definitive_Content=definitive_Content.replace('\'','').replace('[','').replace(']','').\
+    replace('movi','').replace('film','').replace('watch','').replace('one','').replace('much','').\
+    replace('great','').replace('like','').replace('make','').replace('even','').\
+    replace('good','').replace('realli','').replace('well','').replace('look','').\
+    replace('give','').replace('go','').replace('want','').replace('give','').replace('end','').\
+    replace('feel','').replace('time','').replace('said','').replace('thing','')
+    replace('without','').replace('say','').replace('come','').replace('turn','').\
+    replace('never','').replace('play','')
+    replace(' ,','')
 
-
-
-
-print(definitive_Content)
-print(type(definitive_Content))
 
 def displayWordCloud(data = None, backgroundcolor = 'white', width=800, height=600 ):
-    wordcloud = WordCloud(stopwords = STOPWORDS, 
-                          background_color = backgroundcolor, 
+    wordcloud = WordCloud(stopwords = STOPWORDS,
+                          background_color = backgroundcolor,
                          width = width, height = height).generate(data)
     plt.figure(figsize = (15 , 10))
     plt.imshow(wordcloud)
     plt.axis("off")
     plt.show()
 
-%time displayWordCloud(definitive_Content)
+print(definitive_Content)
+displayWordCloud(definitive_Content)
