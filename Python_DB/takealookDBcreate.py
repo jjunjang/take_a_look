@@ -1,6 +1,7 @@
 import pymysql
 
-connect = pymysql.connect(host='takealook.cjdwnzzk2agh.ap-northeast-2.rds.amazonaws.com', user='tal_admin', password='take1234', db='takealook', charset='utf8', local_infile = 1)
+connect = pymysql.connect(host='127.0.0.1', user='root', password='han1280', db='takealook', charset='utf8', local_infile = 1)
+# AWS RDS : takealook.cjdwnzzk2agh.ap-northeast-2.rds.amazonaws.com
 cursor = connect.cursor(pymysql.cursors.DictCursor)
 
 # 'execute' 메소드에 for문을 이용하여 실행할 쿼리문을 전달하고 'fetchall' 메소드를 이용하여 쿼리문을 실행하였습니다.

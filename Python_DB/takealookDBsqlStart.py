@@ -3,7 +3,8 @@ import pymysql
 import time
 
 # SQL 에서 "LOAD DATA LOCAL INFILE" 명령어를 사용하려면 "local_infile = 1" 옵션을 추가 해줘야 함
-connect = pymysql.connect(host='takealook.cjdwnzzk2agh.ap-northeast-2.rds.amazonaws.com', user='tal_admin', password='take1234', db='takealook', charset='utf8', local_infile = 1)
+connect = pymysql.connect(host='localhost', user='root', password='han1280', db='takealook', charset='utf8', local_infile = 1)
+# AWS RDS : takealook.cjdwnzzk2agh.ap-northeast-2.rds.amazonaws.com
 cursor = connect.cursor(pymysql.cursors.DictCursor)
 #
 # # Dataset에 절대주소로 참조할때 폴더별 구분자는 '/' 이다.
@@ -113,16 +114,20 @@ SQL_S6 = ["USE takealook;",
             delete from ratings
             where tconst not in (select tconst from basic_titles);
          ''']
-SQL_S7 = ["USE takealook;",
+SQL_S8 = ["USE takealook;",
           '''
-            SELECT * FROM basic_titles
-            INTO OUTFILE 'C:/Users/JJunJang/OneDrive/project/TakeALook_pj/pythonDB/my_table.csv'
-            CHARACTER SET utf8
-            FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-            LINES TERMINATED BY '\n'
+            ALTER TABLE basic_titles
+            ADD (averageRating FLOAT NULL DEFAULT NULL,
+                    numVotes INT(10) NULL DEFAULT NULL);
+         ''']
+SQL_S9 = ["USE takealook;",
+          '''
+            INSERT INTO basic_titles (tconst, averageRating, numVotes)
+            SELECT tconst, averageRating, numVotes
+            FROM basic_titles;
          ''']
 
-SQL_Sentence = [SQL_S1, SQL_S2, SQL_S3, SQL_S4, SQL_S5, SQL_S6, SQL_S7]
+SQL_Sentence = [SQL_S1, SQL_S2, SQL_S3, SQL_S4, SQL_S5, SQL_S6, SQL_S8, SQL_S9]
 
 print("# SQL 간소화 작업 시작")
 
