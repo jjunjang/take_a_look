@@ -1,0 +1,17 @@
+1. nconst + 배우 이름 + 생년월일 + 직업
+https://datasets.imdbws.com/name.basics.tsv.gz
+
+2. 영화고유번호 (tconst) + 나라별 제목 + 언어(KR, JP, US, PL 등등)
+https://datasets.imdbws.com/title.akas.tsv.gz
+
+3. 영화고유번호 (tconst) + 타입(영화, 동영상, tv에피소드 등) + 영화 출시년도 + 런타임 + 장르(코미디, 로맨스, 어드벤쳐 등등)
+https://datasets.imdbws.com/title.basics.tsv.gz
+
+4. 감독 and 작가
+https://datasets.imdbws.com/title.crew.tsv.gz
+
+5. 영화고유번호 (tconst) + 감독 포함 주요등장인물 + 직업 + 캐릭터
+https://datasets.imdbws.com/title.principals.tsv.gz
+
+6. 영화 tconst + 평균평점 + 투표수
+https://datasets.imdbws.com/title.ratings.tsv.gz

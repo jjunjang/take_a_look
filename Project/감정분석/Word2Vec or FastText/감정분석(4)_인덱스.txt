@@ -1,0 +1,84 @@
+import csv
+import re
+import nltk
+from nltk.tokenize import TreebankWordTokenizer
+from nltk.corpus import stopwords
+from collections import Counter
+
+vocab_Title=Counter()      # 파이썬의 Counter 모듈을 이용하면 단어의 모든 빈도를 쉽게 계산할 수 있습니다.
+vocab_Content = Counter()
+
+tokenizer = TreebankWordTokenizer()         #토큰화를 위해
+# shortword = re.compile(r'\W*\b\w{1,2}\b')
+Difinitive_Title = []                       #최종 저장될 Title
+Difinitive_Content = []                     #최종 저장될 Content
+Title_to_Index = {}                         #토큰화된 타이틀 인덱스
+Content_to_Index = {}                       #토큰화된 컨텐츠 인덱스
+
+stemmer = nltk.stem.PorterStemmer()         #PoterStemmer 를 이용하여 스테밍
+stop_words = set(stopwords.words('english'))#불용어 제거용 stopwords
+
+
+#파일 불러와 읽는단
+f = open("D:\\Project\\WebCrowling\\tt0338564.tsv", 'r', encoding='utf-8')
+rdr = list(csv.reader(f, delimiter='\t', quoting=3))
+Star = []
+Id = []
+Title = []
+Content = []
+f.close()
+
+#읽어온 파일을 추가하는 단.
+for line in rdr:
+    Star.append(line[0])
+    Id.append(line[1])
+    Title.append(line[2])
+    Content.append(line[3])
+
+# 읽어온 Title,Content를 토큰화 / 정제하는 단
+for i in range(len(Content)):
+    Title_Token = tokenizer.tokenize(Title[i])     #타이틀 토큰화
+    Content_Token = tokenizer.tokenize(Content[i]) #컨텐츠 토큰화
+    Title_Result = []
+    Content_Result = []
+
+    for word in Title_Token:
+        word = re.sub('[^a-zA-Z]', '', word)   # 영문자 제외 모두 삭제
+        word = word.lower()                     # 소문자
+        if word not in stop_words:              # 불용어에 포함되어 있지 않은것
+            if len(word) > 2 :                  # 길이가 2자리 이하인것은 제외
+                Title_Result.append(word)       # 을 추가.
+                vocab_Title[word] = vocab_Title[word] + 1
+    Difinitive_Title.append(Title_Result)          # 모든 정제작업이 이루워진 배열이 Difinitive 배열
+
+    for word in Content_Token:
+        word = re.sub('[^a-zA-Z]', '', word)   # 영문자 제외 모두 삭제
+        word = word.lower()                     # 소문자
+        if word not in stop_words:              # 불용어에 포함되어 있지 않은것
+            if len(word) > 2 :                  # 길이가 2자리 이하인것은 제외
+                Content_Result.append(word)       # 을 추가.
+                vocab_Content[word] = vocab_Content[word] + 1
+    Difinitive_Content.append(Content_Result)
+
+T_vocab_sorted = sorted(vocab_Title.items(), key=lambda x:x[1], reverse=True)
+C_vocab_sorted = sorted(vocab_Content.items(), key=lambda x:x[1], reverse=True)
+
+i = 0
+k = 0
+
+#토큰화된 단어별 인덱스를 정렬하는 단.
+for(word, frequency) in T_vocab_sorted :
+    if frequency > 2 :
+        i += 1
+        Title_to_Index[word] = i
+for(word, frequency) in C_vocab_sorted :
+    if frequency > 2 :
+        k += 1
+        Content_to_Index[word] = k
+
+print(Title_to_Index)
+print(vocab_Title)
+print(Content_to_Index)
+print(vocab_Content)
+
+

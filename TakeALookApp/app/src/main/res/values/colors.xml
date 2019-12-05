@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#F2DC93</color> <!--상단 탭 색상-->
+    <color name="colorPrimaryDark">#F2DC93</color> <!--최상단 (시간나오는) 색-->
+    <color name="textColorPrimary">#EBAE34</color> <!--흰색 텍스트 검은색 택스트로 바꿈-->
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#FFFFFF</color>
+    <color name="colorAccent">#EBAE34</color>
+</resources>

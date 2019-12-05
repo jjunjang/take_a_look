@@ -1,0 +1,77 @@
+import csv
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.stem.snowball import SnowballStemmer
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
+
+definitive_Content = []
+definitive_Title = []
+
+
+
+f = open("D:\\Project\\WebCrowling\\tt7784604.tsv",'r',encoding='utf-8')
+rdr = list(csv.reader(f,delimiter='\t',quoting=3))
+Star = []
+Id = []
+Title = []
+Content = []
+f.close()
+for line in rdr:
+    Star.append(line[0])
+    Id.append(line[1])
+    Title.append(line[2])
+    Content.append(line[3])
+
+
+
+i = 0;
+for line in Content:
+    strContent = Content[i]
+    strTitle = Title[i]
+
+    #영문자 대소문자 제외 모두 삭제
+    remove_Title = re.sub('[^a-zA-Z]',' ', strTitle)
+    remove_Content = re.sub('[^a-zA-Z]',' ', strContent)
+
+    #소문자 변환 & 토큰화
+    remove_Content = remove_Content.lower().split()
+    remove_Title = remove_Title.lower().split()
+
+    #불용어 삭제
+    remove_Title = [i for i in remove_Title if not i in stopwords.words('english')]
+    remove_Content = [i for i in remove_Content if not i in stopwords.words('english')]
+
+    #스테밍
+    stemmer = nltk.stem.PorterStemmer()
+    definitive_Title.append([stemmer.stem(w) for w in remove_Content])
+    definitive_Content.append([stemmer.stem(w) for w in remove_Content])
+
+    i += 1
+
+
+definitive_Content = ' '.join(str(v) for v in definitive_Content)
+definitive_Content=definitive_Content.replace('\'','').replace('[','').replace(']','').\
+    replace('movi','').replace('film','').replace('watch','').replace('one','').replace('much','').\
+    replace('great','').replace('like','').replace('make','').replace('even','').\
+    replace('good','').replace('realli','').replace('well','').replace('look','').\
+    replace('give','').replace('go','').replace('want','').replace('give','').replace('end','').\
+    replace('feel','').replace('time','').replace('said','').replace('thing','')
+    replace('without','').replace('say','').replace('come','').replace('turn','').\
+    replace('never','').replace('play','')
+    replace(' ,','')
+
+
+def displayWordCloud(data = None, backgroundcolor = 'white', width=800, height=600 ):
+    wordcloud = WordCloud(stopwords = STOPWORDS,
+                          background_color = backgroundcolor,
+                         width = width, height = height).generate(data)
+    plt.figure(figsize = (15 , 10))
+    plt.imshow(wordcloud)
+    plt.axis("off")
+    plt.show()
+
+print(definitive_Content)
+displayWordCloud(definitive_Content)

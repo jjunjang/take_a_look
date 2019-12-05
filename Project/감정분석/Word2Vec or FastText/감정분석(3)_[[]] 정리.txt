@@ -1,0 +1,59 @@
+import csv
+import re
+import nltk
+from nltk.tokenize import TreebankWordTokenizer
+from nltk.corpus import stopwords
+from collections import Counter
+vocab=Counter() # 파이썬의 Counter 모듈을 이용하면 단어의 모든 빈도를 쉽게 계산할 수 있습니다.
+
+tokenizer = TreebankWordTokenizer()
+shortword = re.compile(r'\W*\b\w{1,2}\b')
+Difinitive_Title = []
+Difinitive_Content = []
+stemmer = nltk.stem.PorterStemmer()
+
+Temp = str
+
+f = open("D:\\Project\\WebCrowling\\tt0338564.tsv", 'r', encoding='utf-8')
+rdr = list(csv.reader(f, delimiter='\t', quoting=3))
+Star = []
+Id = []
+Title = []
+Content = []
+f.close()
+
+for line in rdr:
+    Star.append(line[0])
+    Id.append(line[1])
+    Title.append(line[2])
+    Content.append(line[3])
+
+for i in range(len(Content)):
+    # 1,2자리 작은 단어 삭제
+    remove_Title = Title[i]
+    remove_Title = shortword.sub('', remove_Title)
+    remove_Content = Content[i]
+    remove_Content = shortword.sub('', remove_Content)
+
+    # 대소문자 제외 전부 제거
+    remove_Title = re.sub('[^a-zA-Z]', ' ', remove_Title)
+    remove_Content = re.sub('[^a-zA-Z]', ' ', remove_Content)
+
+    # 토큰화
+    Title_Token = tokenizer.tokenize(remove_Title)
+    Content_Token = tokenizer.tokenize(remove_Content)
+
+    # 불용어 제거
+    Difinitive_Title.append([temp for temp in Title_Token if not temp in stopwords.words('english')])
+    Difinitive_Content.append([temp for temp in Content_Token if not temp in stopwords.words('english')])
+
+for i in range(len(Difinitive_Content)):
+    Temp_Title = str(Difinitive_Title[i])
+    Temp_Con = str(Difinitive_Content[i])
+    Difinitive_Title[i] = Temp_Title.replace("[", "").replace("]", "").replace('\'', '').replace(' ', '')
+    Difinitive_Content[i] = Temp_Con.replace("[", "").replace("]", "").replace('\'', '').replace(' ', '')
+
+print(range(len(Difinitive_Title)))
+print(Difinitive_Title)
+print(Difinitive_Content)
+

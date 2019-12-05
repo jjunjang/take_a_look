@@ -1,0 +1,93 @@
+SELECT nconst FROM basic_names
+WHERE nconst NOT IN (SELECT nconst FROM principals);
+
+SELECT nconst FROM principals
+WHERE nconst NOT IN (SELECT nconst FROM basic_titles);
+
+// basic_names테이블의 겹치는 nconst갯수 
+SELECT count(nconst) FROM basic_names
+WHERE nconst IN (SELECT nconst FROM principals);
+
+ㅡㅡㅡㅡㅡㅡ테이블복사 후 insertㅡㅡㅡㅡㅡㅡㅡㅡ
+INSERT INTO basic_names SELECT * FROM basic_names
+WHERE nconst IN (SELECT nconst FROM principals);
+
+# B 테이블만든뒤 A테이블에 tconst기준으로 UPDATE
+UPDATE basic_titles b, url u
+SET b.imgUrl = u.imgUrl
+WHERE b.tconst = u.tconst
+
+# titleKor UPDATE
+UPDATE basic_titles B, titlekortable K
+SET B.titleKor = K.titleKor
+WHERE B.tconst = K.tconst;
+
+# SELECT ALL
+SELECT COUNT(*) FROM basic_names;
+SELECT COUNT(*) FROM basic_titles;
+SELECT COUNT(*) FROM crew;
+SELECT COUNT(*) FROM principals;
+SELECT COUNT(*) FROM ratings;
+
+# OPTIMIZE ALL
+OPTIMIZE TABLE basic_titles;
+OPTIMIZE TABLE basic_names;
+OPTIMIZE TABLE crew;
+OPTIMIZE TABLE principals;
+OPTIMIZE TABLE ratings;
+
+# 지우기
+DELETE FROM basic_names
+WHERE nconst NOT IN (SELECT nconst FROM principals);
+
+# EXPLAIN - 처리방식보기
+EXPLAIN select * from basic_names WHERE nconst NOT IN (SELECT nconst FROM principals);
+
+# titleKor.tsv import
+LOAD DATA LOCAL INFILE     'C:/Users/JJunJang/Desktop/Dataset/tsv/titleKor.tsv'
+INTO TABLE						titlekor
+CHARACTER SET 			   	utf8
+COLUMNS TERMINATED BY      '\t'
+LINES TERMINATED BY        '\r\n'
+IGNORE                     1 LINES;
+
+# TEXT 파일로 뽑기
+SELECT tconst, genres FROM basic_titles
+INTO OUTFILE 'tconst.tsv'
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n'
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+DELETE FROM basic_titles
+WHERE titleType != 'movie';
+
+DELETE FROM basic_titles 
+WHERE startYear not between 1980 and 2020 and primaryTitle <> 'Citizen Kane'
+and primaryTitle <> '12 Angry Men' 
+and primaryTitle <> 'The Godfather'     
+and primaryTitle <> 'The Godfather: Part II'
+and primaryTitle <> 'The Godfather: Part III'
+and primaryTitle <> 'Gone With The Wind';
+
+DELETE FROM basic_titles 
+WHERE startYear is NULL;
+
+DELETE FROM ratings
+WHERE numVotes < 5000;
+
+DELETE FROM ratings
+WHERE averagerating <= 4.0;
+
+DELETE FROM basic_titles
+WHERE tconst not in (SELECT tconst FROM ratings);
+
+DELETE FROM ratings
+WHERE tconst not in (SELECT tconst FROM basic_titles);
+
+OPTIMIZE TABLE basic_titles;
+OPTIMIZE TABLE crew;
+OPTIMIZE TABLE principals;
+OPTIMIZE TABLE ratings;

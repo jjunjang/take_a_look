@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/layout">
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+
+            <ImageView
+                android:id="@+id/reimg1"
+                android:padding="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_width="190dp"
+                android:layout_height="330dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/tt2194499" />
+
+            <ImageView
+                android:id="@+id/reimg2"
+                android:padding="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_width="190dp"
+                android:layout_height="330dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/tt0314331"
+                android:layout_toRightOf="@id/reimg1"/>
+
+
+            <ImageView
+                android:id="@+id/reimg3"
+                android:padding="10dp"
+                android:layout_width="190dp"
+                android:layout_height="330dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/tt3783958"
+                android:layout_below="@id/reimg1"/>
+
+            <ImageView
+                android:id="@+id/reimg4"
+                android:padding="10dp"
+                android:layout_width="190dp"
+                android:layout_height="330dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/tt0000001"
+                android:layout_below="@id/reimg1"
+                android:layout_toRightOf="@id/reimg3"/>
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>
